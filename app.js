@@ -3,6 +3,8 @@ const express = require('express');
 
 const { v4 : uuidv4 } = require('uuid');
 
+const articleService = require('./article/article-service');
+
 // CONFIGURATION MONGO
 const mongoose = require('mongoose');
 
@@ -36,7 +38,7 @@ function buildAPIResponse(code, message, data){
     // Log
     console.log(`Code : ${code} - Message : ${message}`);
     
-    return { code : code, message: message, data: data};
+    return { code : code, message: message, data: data };
 }
 
 function httpApiResponse(response, code, message, data) {
@@ -45,25 +47,19 @@ function httpApiResponse(response, code, message, data) {
 
 // Creer les routes
 app.get("/articles", async (request, response) => {
-    // Récupérer la liste de tout les articles en base
-    const articles = await Article.find();
+    
+    const responseAPI = await articleService.getAllArticles();
 
-    return httpApiResponse(response, "200", "La liste des articles a été récupérés avec succès", articles);
+    return response.json(responseAPI);
 });
 
 app.get("/article/:id", async (request, response) => {
     // Récupérer le param id (attention les param d'url sont en string)
     const id = request.params.id;
 
-    // Trouver un article par son id
-    const foundArticle = await Article.findOne({ id : id});
+    const responseAPI = await articleService.getArticleById(id);
 
-    // Si trouve pas
-    if (!foundArticle){
-        return httpApiResponse(response, "702", `Impossible de récupérer un article avec l'UID ${id}`, null);
-    }
-
-    return httpApiResponse(response, "200", "Article récupéré avec succès", foundArticle);
+    return response.json(responseAPI);
 });
 
 app.post("/save-article", async (request, response) => {
