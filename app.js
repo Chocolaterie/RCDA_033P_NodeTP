@@ -31,20 +31,24 @@ const app = express();
 // Autoriser à traiter les données qui sont dans le body de la requête
 app.use(express.json());
 
-// Simulation de données en mémoire
-let DB_ARTICLES = [
-    { id: 1, title: 'Premier article', content: 'Contenu du premier article', author: 'Isaac' },
-    { id: 2, title: 'Deuxième article', content: 'Contenu du deuxième article', author: 'Sanchez' },
-    { id: 3, title: 'Troisième article', content: 'Contenu du troisième article', author: 'Toto' }
-];
+// HELPERS/UTILITAIRE
+function buildAPIResponse(code, message, data){
+    // Log
+    console.log(`Code : ${code} - Message : ${message}`);
+    
+    return { code : code, message: message, data: data};
+}
+
+function httpApiResponse(response, code, message, data) {
+    return response.json(buildAPIResponse(code, message, data));
+}
 
 // Creer les routes
 app.get("/articles", async (request, response) => {
-
     // Récupérer la liste de tout les articles en base
     const articles = await Article.find();
 
-    return response.json(articles);
+    return httpApiResponse(response, "200", "La liste des articles a été récupérés avec succès", articles);
 });
 
 app.get("/article/:id", async (request, response) => {
@@ -54,9 +58,13 @@ app.get("/article/:id", async (request, response) => {
     // Trouver un article par son id
     const foundArticle = await Article.findOne({ id : id});
 
-    return response.json(foundArticle);
-});
+    // Si trouve pas
+    if (!foundArticle){
+        return httpApiResponse(response, "702", `Impossible de récupérer un article avec l'UID ${id}`, null);
+    }
 
+    return httpApiResponse(response, "200", "Article récupéré avec succès", foundArticle);
+});
 
 app.post("/save-article", async (request, response) => {
     // Récupérer l'article de la requete
@@ -66,6 +74,13 @@ app.post("/save-article", async (request, response) => {
     let foundArticle = await Article.findOne({ id : articleJSON.id});
 
     if (foundArticle){
+         // Tester si un article avec le meme titre que l'article envoyé en JSON
+        const foundArticleByTitle = await Article.findOne({ title : articleJSON.title, id:{ $ne: foundArticle.id } });
+
+        if (foundArticleByTitle){
+            return httpApiResponse(response, "701", "Impossible de modifier un article si un autre article possède un titre similaire", null);
+        }
+
         // Ecraser avec les nouvelles données
         foundArticle.title = articleJSON.title;
         foundArticle.content = articleJSON.content;
@@ -75,9 +90,16 @@ app.post("/save-article", async (request, response) => {
         await foundArticle.save();
 
         // PS : return => arreter la fonction
-        return response.json({ message: `L'article a été modifié avec succès`});
+        return httpApiResponse(response, "200", "Article modifié avec succès", foundArticle);
     }
     // Alors => Creation
+    // Tester si un article avec le meme titre que l'article envoyé en JSON
+    const foundArticleByTitle = await Article.findOne({ title : articleJSON.title });
+
+    if (foundArticleByTitle){
+        return httpApiResponse(response, "701", "Impossible d'ajouter un article avec un titre déjà existant", null);
+    }
+
     let newArticle = new Article(articleJSON);
 
     // generer un id
@@ -86,7 +108,7 @@ app.post("/save-article", async (request, response) => {
     // save en base
     await newArticle.save();
 
-    return response.json({ message: `Article crée avec succès` });
+    return httpApiResponse(response, "200", " Article ajouté avec succès", newArticle);
 });
 
 app.delete("/article/:id", async (request, response) => {
@@ -97,16 +119,14 @@ app.delete("/article/:id", async (request, response) => {
     const foundArticle = await Article.findOne({ id : id });
 
     // Si pas trouvé
-    /*
-    if (foundIndex === -1){
-        return response.json({ message: `L'article id => ${id} n'existe pas` });
+    if (!foundArticle){
+        return httpApiResponse(response, "702", `Impossible de supprimer un article dont l'UID n'existe pas`, null);
     }
-    */
 
     // Supprimer l'article
     await foundArticle.deleteOne();
 
-    return response.json({ message: `Article id ${id} supprimé avec succès` });
+    return httpApiResponse(response, "200", `L'article ${id} a été supprimé avec succès`, foundArticle);
 });
 
 // Démarrer le server
