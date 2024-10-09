@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "toto" : "jest"
+    "toto": "jest"
   },
   "author": "",
   "license": "ISC",
@@ -12,6 +12,7 @@
   "dependencies": {
     "express": "^4.21.0",
     "jest": "^29.7.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.0",
     "uuid": "^10.0.0"
   }
