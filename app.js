@@ -6,26 +6,13 @@ const { v4 : uuidv4 } = require('uuid');
 const articleService = require('./article/article-service');
 
 // CONFIGURATION MONGO
-const mongoose = require('mongoose');
+const mongooseConfig = require('./mongoose-config');
 
-// Connecte à la bdd
-mongoose.connect("mongodb://127.0.0.1:27017/db_article");
+// lancer la connection à notre base
+mongooseConfig.connectToDatabase();
 
-// Afficher un message quand connectioné avec succès
-mongoose.connection.once('open', () => {
-    console.log(`Connecté(e) à la base`);
-});
-
-// Afficher message erreur si pas connecté
-mongoose.connection.on('error', () => {
-    console.log(`Erreur de connection à la base`);
-});
-
-// Modèle article
-const Article = mongoose.model(
-    "Article", 
-    { id : String, title: String, content : String, author: String }, 
-    "articles");
+// Importer mon modele Article
+const Article = require('./article/article-model');
 
 // instancier
 const app = express();

@@ -1,3 +1,6 @@
+// Importer mon modele Article
+const Article = require('./article-model');
+
 function buildAPIResponse(code, message, data){
     // Log
     console.log(`Code : ${code} - Message : ${message}`);

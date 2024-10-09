@@ -1,5 +1,17 @@
 const articleService = require('./article-service');
 
+// CONFIGURATION MONGO
+const mongooseConfig = require('../mongoose-config');
+
+test('Etablir la connexion', async () => {
+
+    // lancer la connection à notre base
+    await mongooseConfig.connectToDatabase();
+
+    // Assert -> tester que le code metier = 200
+    expect(true).toBe(true);
+});
+
 test('Tester la liste des articles fonctionne', async () => {
 
     const responseApi = await articleService.getAllArticles();
