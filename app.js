@@ -13,6 +13,13 @@ const app = express();
 // Autoriser à traiter les données qui sont dans le body de la requête
 app.use(express.json());
 
+// SWAGGER
+// Init swagger middleware
+const swaggerUI = require('swagger-ui-express');
+const swaggerDocument = require('./swagger_output.json');
+
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+
 // Injecter routes article
 const articleRouter = require('./article/article-routes');
 app.use('/article', articleRouter);
