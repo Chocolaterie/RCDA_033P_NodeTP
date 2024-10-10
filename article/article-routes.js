@@ -4,7 +4,8 @@ const { middlewareVerifyToken } = require('../core/middlewares');
 const articleService = require('./article-service');
 
 router.get("/all", async (request, response) => {
-    
+    // #swagger.description = "L'entrypoint qui permet de récupérer la liste des articles"
+
     const responseAPI = await articleService.getAllArticles();
 
     return response.json(responseAPI);

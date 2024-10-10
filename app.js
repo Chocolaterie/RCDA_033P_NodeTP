@@ -10,6 +10,10 @@ mongooseConfig.connectToDatabase();
 // instancier
 const app = express();
 
+// CORS -> Autoriser toutes les IP à accéder au serveur
+const cors = require('cors');
+app.use(cors());
+
 // Autoriser à traiter les données qui sont dans le body de la requête
 app.use(express.json());
 

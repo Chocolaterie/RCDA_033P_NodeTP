@@ -4,7 +4,7 @@ const authService = require('./auth-service');
 
 router.post("/", async (request, response) => {
     // Si email / password invalide => erreur
-    const loginRequest = request.body;
+    const loginRequest = { email : request.body.email, password: request.body.password};
 
     const responseAPI = await authService.auth(loginRequest);
 

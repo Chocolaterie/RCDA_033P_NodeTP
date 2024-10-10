@@ -4,12 +4,15 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "toto": "jest"
+    "start": "nodemon app.js",
+    "swagger" : "node swagger-generate-doc.js",
+    "s-s" : "npm run swagger & npm run start"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.21.0",
     "jest": "^29.7.0",
     "jsonwebtoken": "^9.0.2",

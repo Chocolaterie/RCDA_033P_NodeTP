@@ -5,8 +5,10 @@ const { SECRET_JWT } = require('./config');
 module.exports = {
 
     middlewareVerifyToken : (request, response, next) => {
-        //const token = request.headers.authorization.split(" ")[1];
-    
+        /* #swagger.security = [{
+            "bearerAuth": []
+        }] */
+
         // Verifier que le header authorization n'est pas null
         if (!request.headers.authorization){
             return httpApiResponse(response, "740", `Veuillez envoyer un token`, null);
