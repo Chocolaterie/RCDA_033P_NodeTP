@@ -2,10 +2,12 @@
 const express = require('express');
 
 // CONFIGURATION MONGO
+/*
 const mongooseConfig = require('./mongoose-config');
 
 // lancer la connection à notre base
 mongooseConfig.connectToDatabase();
+*/
 
 // instancier
 const app = express();
