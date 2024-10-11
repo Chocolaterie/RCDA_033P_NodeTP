@@ -43,4 +43,4 @@ jobs:
           host: 161.35.39.34
           username: root
           password: Chocolatine31
-          script: node /home/app/app.js
+          script: systemctl start my_app.service
